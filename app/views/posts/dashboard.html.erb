@@ -1,6 +1,6 @@
 <h1>The Wall</h1>
 <hr>
-<span><strong>Welcome! <%= session[:first_name] %></strong></span>
+<span>Welcome <strong><%= session[:first_name] %> !</strong></span><br>
 <a href="/users/logout">Logout</a> <br><br>
 <form action="/posts/create" method="post" id="create_post_form">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">

@@ -1,20 +1,20 @@
 class Post < ApplicationRecord
-    # DOCU: This will fetch all the posts and comments
+   
+    # DOCU: This will fetch all posts and comments
     def self.get_all_posts()
         response_data = { :status => false, :result => {}, :error => nil }
 
         begin
             response_data[:status] = true
             response_data[:result] = query_records([
-                "SELECT 
-                    posts.id AS post_id, posts.user_id AS post_owner_id, posts.message, users.first_name,
+                "SELECT
+                    posts.id AS post_id, posts.message, users.first_name, 
                     IF(
                         comments.id IS NOT NULL,
                         JSON_ARRAYAGG(
                             JSON_OBJECT(
                                 'comment_id', comments.id,
                                 'commenter_user_id', comments.user_id,
-                                'commenter_first_name', comment_users.first_name,
                                 'commenter_first_name', comment_users.first_name,
                                 'commenter_message', comments.message
                             )
@@ -25,8 +25,9 @@ class Post < ApplicationRecord
                 INNER JOIN users ON users.id = posts.user_id
                 LEFT JOIN comments ON comments.post_id = posts.id
                 LEFT JOIN users AS comment_users ON comment_users.id = comments.user_id
-                GROUP BY posts.id"
+                GROUP BY posts.id;"
             ])
+
         rescue => exception
             response_data[:error] = exception.message
         end
@@ -34,14 +35,14 @@ class Post < ApplicationRecord
         return response_data
     end
 
-    # DOCU: This will process the saving of post in DB
+    # DOCU: This will process the saving of post in the database
     def self.create_post(params)
         response_data = { :status => false, :result => {}, :error => nil }
 
         begin
             insert_post_id = insert_record([
-                "INSERT INTO posts (user_id, message, created_at, updated_at) VALUES (?, ?, NOW(), NOW())",
-                 params[:user_id], params[:message]
+                "INSERT INTO posts (user_id, message, created_at, updated_at) VALUES (?,?,NOW(),NOW())",
+                params[:user_id], params[:message]
             ])
 
             if insert_post_id > 0
@@ -55,12 +56,12 @@ class Post < ApplicationRecord
         return response_data
     end
 
-    # DOCU: This will process the delete of post and its comments in DB
+    # DOCU: This will process the deleting of post in the database
     def self.delete_post(params)
         response_data = { :status => false, :result => {}, :error => nil }
 
         begin
-            # Check if post has comments, then delete it also
+            # Check if post has comments to delete those first
             post_comments = query_record(["SELECT JSON_ARRAYAGG(id) AS delete_comment_ids FROM comments WHERE post_id =?", params[:post_id]])
 
             if post_comments.present? && post_comments["delete_comment_ids"].present?

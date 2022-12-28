@@ -1,15 +1,13 @@
-<% if posts.length > 0 
+<% if posts.length > 0
     posts.each do |post| %>
 <div class="post_container">
     <h3><%= post["first_name"] %></h3>
     <span><%= post["message"] %></span>
-<% if session[:user_id] === post["post_owner_id"].to_i %>
     <form action="/posts/delete" method="post" class="delete_post_form">
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
         <input type="hidden" name="post_id" value="<%= post["post_id"] %>">
         <input type="submit" value="Delete">
     </form>
-<% end %>
     <div class="comment_container">
         <form action="/comments/create" method="post" class="create_comment_form">
             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">

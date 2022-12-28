@@ -1,12 +1,10 @@
 <% comments.each do |comment| %>
-    <li>
-        <span><strong><%= comment["commenter_first_name"] %>:</strong><%= comment["commenter_message"] %></span>
-    <% if session[:user_id] === comment["commenter_user_id"].to_i %>    
-        <form action="/comments/delete" method="post" class="delete_comment_form">
-            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-            <input type="hidden" name="comment_id" value="<%= comment["comment_id"] %>">
-            <input type="submit" value="Delete">
-        </form>
-    <% end %>
-    </li>
+<li>
+    <span> <strong><%= comment["commenter_first_name"] %>:</strong> <%= comment["commenter_message"] %></span>
+    <form action="/comments/delete" method="post" class="delete_comment_form">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <input type="hidden" name="comment_id" value="<%= comment["comment_id"] %>">
+        <input type="submit" value="Delete">
+    </form>
+</li>
 <% end %>
